@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nika Parshukova — Model Portfolio</title>
+<meta name="description" content="Portfolio of Nika Parshukova — measurements, photos and booking contact.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<!-- og:image и og:url обязаны быть абсолютными: по относительному пути
+     краулеры мессенджеров картинку не находят и кэшируют пустое превью.
+     Ширина и высота нужны WhatsApp и LinkedIn — без них они рисуют
+     маленькую карточку со значком вместо большой обложки. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Nika Parshukova">
+<meta property="og:title" content="Nika Parshukova">
+<meta property="og:description" content="Model portfolio — photos, measurements and booking.">
+<meta property="og:image" content="https://model-portfolio-nikap.netlify.app/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Nika Parshukova">
+<meta property="og:url" content="https://model-portfolio-nikap.netlify.app/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://model-portfolio-nikap.netlify.app/og.jpg">
+<link rel="stylesheet" href="style.css">
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body>
+
+<section class="hero">
+  <video class="hero__video" autoplay muted loop playsinline
+         preload="metadata" poster="video/poster.webp">
+    <source src="video/hero.mp4" type="video/mp4">
+  </video>
+  <div class="hero__overlay"></div>
+  <div class="hero__caption">
+    <h1 class="hero__name" data-content="name">Nika Parshukova</h1>
+    <p class="hero__city" data-content="city">—</p>
+  </div>
+</section>
+
+<main>
+  <section class="gallery reveal" id="gallery"></section>
+
+  <section class="comp reveal" id="comp">
+    <h2 class="section-title">Measurements</h2>
+    <dl class="comp__list" id="comp-list"></dl>
+  </section>
+
+  <section class="booking reveal" id="booking">
+    <h2 class="section-title">Work with me</h2>
+    <p class="booking__line" data-content="booking">Available for editorial, commercial, runway and lookbook work.</p>
+    <a class="booking__button" id="telegram-link" href="#" target="_blank" rel="noopener">
+      Message on Telegram
+    </a>
+  </section>
+</main>
+
+<footer class="footer">
+  <p data-content="name">Nika Parshukova</p>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
+  <button class="lightbox__close" id="lightbox-close" aria-label="Close">&times;</button>
+  <img class="lightbox__img" id="lightbox-img" alt="">
+  <p class="lightbox__counter" id="lightbox-counter"></p>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
