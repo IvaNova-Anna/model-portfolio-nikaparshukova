@@ -9,7 +9,7 @@ export const content = {
   telegram: 'https://t.me/PARSHUKOVAAAAA',
   booking: 'Available for editorial, commercial, runway and lookbook work.',
   compCard: [
-    ['Height', '170 cm'],
+    ['Height', '162 cm'],
     ['Bust', '82 cm'],
     ['Waist', '62 cm'],
     ['Hips', '88 cm'],
