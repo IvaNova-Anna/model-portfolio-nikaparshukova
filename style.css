@@ -44,13 +44,30 @@ body {
 }
 
 /* --- Hero -------------------------------------------------------------- */
+/* Съёмка вертикальная, а шапка широкая. Поэтому экран делится: слева кадр,
+   справа поле с именем. Ширина колонки с видео равна её высоте, умноженной
+   на пропорцию кадра, — тогда cover совпадает с contain и от модели ничего
+   не отрезается. Шире половины экрана колонка не становится: на низком и
+   широком окне видео иначе съело бы всё поле с именем. */
 .hero {
-  position: relative;
+  display: flex;
   height: 100svh;
   min-height: 480px;
   overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+  /* Общий отступ секций тут не нужен: шапка занимает экран целиком. Пока
+     видео лежало абсолютом, padding был не виден — во флексе он отрезал бы
+     от кадра сверху и снизу по 12vh. */
+  padding: 0;
+}
+.hero__media {
+  position: relative;
+  flex: 0 0 auto;
+  width: min(50vw, calc(100svh * 1080 / 1920));
+  height: 100%;
   background: var(--dark-bg);
-  color: var(--dark-fg);
+  overflow: hidden;
 }
 .hero__video {
   position: absolute;
@@ -58,34 +75,69 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 15%;
 }
-.hero__overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,.1) 45%, rgba(10,10,10,.85) 100%);
-}
+/* Затемнение нужно только там, где имя лежит поверх кадра, — на телефоне. */
+.hero__overlay { display: none; }
 .hero__caption {
-  position: absolute;
-  inset: auto 0 12vh 0;
-  text-align: center;
-  padding: 0 var(--pad);
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 clamp(1.5rem, 5vw, 5rem);
 }
 .hero__name {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: clamp(2.75rem, 13vw, 7rem);
+  font-size: clamp(2rem, 4.6vw, 4.75rem);
   letter-spacing: .12em;
   text-transform: uppercase;
   line-height: 1.05;
 }
 .hero__city {
-  margin: 1.1em 0 0;
+  margin: 1.4em 0 0;
   font-size: .72rem;
   letter-spacing: .38em;
   text-transform: uppercase;
-  color: var(--dark-muted);
+  color: var(--muted);
+}
+
+/* На телефоне экран сам вертикальный — делить его незачем: видео занимает
+   весь первый экран, имя ложится поверх кадра по затемнению. */
+@media (max-width: 767px) {
+  .hero {
+    display: block;
+    position: relative;
+    background: var(--dark-bg);
+    color: var(--dark-fg);
+  }
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+  }
+  /* Кадр снят в светлой студии, поэтому низ затемняем сильнее, чем просто
+     «для настроения»: ровно там лежит белое имя. */
+  .hero__overlay {
+    display: block;
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      rgba(0,0,0,.35) 0%, rgba(0,0,0,.15) 40%,
+      rgba(10,10,10,.72) 76%, rgba(10,10,10,.92) 100%);
+  }
+  .hero__caption {
+    position: absolute;
+    inset: auto 0 12vh 0;
+    display: block;
+    text-align: center;
+    padding: 0 var(--pad);
+  }
+  /* Размер подобран по самому длинному слову: «PARSHUKOVA» с разрядкой
+     занимает около 7,4em, и на 13vw оно вылезало за оба края экрана. */
+  .hero__name { font-size: clamp(1.75rem, 9vw, 3rem); }
+  .hero__city { color: var(--dark-muted); }
 }
 
 /* --- Общее для секций -------------------------------------------------- */
