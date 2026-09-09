@@ -1,4 +1,5 @@
 import { content } from './content.js';
+import { rows } from './gallery.js';
 
 /** Расставляет тексты из content.js по элементам с data-content. */
 function fillContent() {
@@ -66,70 +67,93 @@ function setupReveal() {
   sections.forEach((el) => observer.observe(el));
 }
 
-const BREAKPOINTS = [
-  { min: 1200, columns: 4 },
-  { min: 768, columns: 3 },
-  { min: 0, columns: 2 },
-];
-
-/** Сколько колонок при текущей ширине окна. */
-function columnCount(width = window.innerWidth) {
-  return BREAKPOINTS.find((b) => width >= b.min).columns;
+/** Имя файла без папки и расширения — этим фото названо в gallery.js. */
+function photoName(src) {
+  return src.split('/').pop().replace(/\.[^.]+$/, '');
 }
 
 /**
- * Раскладывает фото по колонкам: каждое следующее уходит в самую короткую.
- * Порядок слева направо сохраняется, нижняя кромка выравнивается сама.
+ * Собирает ряды из gallery.js: раскладка задаётся вручную, а размеры кадров
+ * подтягиваются из photos.json.
+ *
+ * Фото, не попавшее ни в один ряд, уходит хвостом по три в ряд, а не
+ * пропадает: забытая строчка в раскладке не должна стирать фото с сайта.
  */
-function renderGallery(photos, columns) {
+function buildRows(photos, layout) {
+  const byName = new Map(photos.map((photo) => [photoName(photo.src), photo]));
+  const used = new Set();
+  const built = [];
+
+  for (const row of layout) {
+    const items = [];
+    for (const name of row) {
+      const photo = byName.get(name);
+      if (!photo) {
+        console.warn(`gallery.js: нет фото «${name}» в photos/`);
+        continue;
+      }
+      used.add(name);
+      items.push(photo);
+    }
+    if (items.length) built.push(items);
+  }
+
+  const leftover = photos.filter((photo) => !used.has(photoName(photo.src)));
+  for (let i = 0; i < leftover.length; i += 3) {
+    built.push(leftover.slice(i, i + 3));
+  }
+
+  return built;
+}
+
+/**
+ * Рисует ряды. Внутри ряда flex-grow равен пропорции кадра, поэтому свободная
+ * ширина делится так, что у всех фото ряда одинаковая высота без обрезки.
+ */
+function renderGallery(rowsOfPhotos) {
   const gallery = document.getElementById('gallery');
   gallery.innerHTML = '';
 
-  const heights = new Array(columns).fill(0);
-  const cols = Array.from({ length: columns }, () => {
+  let index = 0;
+  for (const row of rowsOfPhotos) {
     const div = document.createElement('div');
-    div.className = 'gallery__col';
+    div.className = 'gallery__row';
+
+    for (const photo of row) {
+      const figure = document.createElement('figure');
+      figure.className = 'gallery__item';
+      figure.dataset.index = index;
+      figure.tabIndex = 0;
+      figure.setAttribute('role', 'button');
+      figure.style.flexGrow = photo.w / photo.h;
+
+      const img = document.createElement('img');
+      img.src = photo.src;
+      img.width = photo.w;
+      img.height = photo.h;
+      img.alt = `${content.name} — photo ${index + 1}`;
+      img.loading = index < 3 ? 'eager' : 'lazy';
+      img.decoding = 'async';
+
+      figure.append(img);
+      div.append(figure);
+      index += 1;
+    }
+
     gallery.append(div);
-    return div;
-  });
-
-  photos.forEach((photo, i) => {
-    const shortest = heights.indexOf(Math.min(...heights));
-    heights[shortest] += photo.h / photo.w;
-
-    const figure = document.createElement('figure');
-    figure.className = 'gallery__item';
-    figure.dataset.index = i;
-    figure.tabIndex = 0;
-    figure.setAttribute('role', 'button');
-
-    const img = document.createElement('img');
-    img.src = photo.src;
-    img.width = photo.w;
-    img.height = photo.h;
-    img.alt = `${content.name} — photo ${i + 1}`;
-    img.loading = i < columns ? 'eager' : 'lazy';
-    img.decoding = 'async';
-
-    figure.append(img);
-    cols[shortest].append(figure);
-  });
+  }
 }
 
 let photos = [];
 
-/** Перерисовывает галерею, только если число колонок изменилось. */
+/* Раскладка фиксированная, поэтому перерисовывать на resize нечего:
+   ряды перестраиваются в колонку средствами CSS. */
 function setupGallery() {
-  let current = columnCount();
-  renderGallery(photos, current);
-
-  window.addEventListener('resize', () => {
-    const next = columnCount();
-    if (next !== current) {
-      current = next;
-      renderGallery(photos, current);
-    }
-  });
+  const rowsOfPhotos = buildRows(photos, rows);
+  /* Лайтбокс адресует фото по индексу, поэтому список должен идти в том же
+     порядке, в каком кадры легли на страницу, а не в алфавитном. */
+  photos = rowsOfPhotos.flat();
+  renderGallery(rowsOfPhotos);
 }
 
 /* 5 с максимум на запрос: зависшая раздача (плохая мобильная сеть) не должна

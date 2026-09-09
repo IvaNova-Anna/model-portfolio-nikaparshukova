@@ -50,7 +50,7 @@ test('адрес сайта в мета-тегах совпадает с эти�
 
   assert.ok(urls.length >= 3, 'в index.html меньше трёх абсолютных адресов');
   for (const url of urls) {
-    assert.strictEqual(new URL(url).host, 'model-portfolio-nikap.netlify.app',
+    assert.strictEqual(new URL(url).host, 'model-portfolio-nikaparshukova.netlify.app',
       `${url} ведёт на чужой сайт — превью ссылки покажет не тот портфолио`);
   }
 });

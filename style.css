@@ -13,11 +13,18 @@
 }
 
 /* --- Палитра ----------------------------------------------------------- */
+/* Страница светлая, первый экран — тёмный. Видео читается только на глубоком
+   фоне, а резкая граница чёрного и белого сама работает акцентом. Поэтому у
+   hero и лайтбокса своя пара цветов: там, где фон принудительно тёмный,
+   --fg (почти чёрный) был бы не виден. */
 :root {
-  --bg: #0a0a0a;
-  --fg: #f2f0ec;
-  --muted: #8a8580;
-  --line: #232323;
+  --bg: #ffffff;
+  --fg: #14110f;
+  --muted: #6f6a64;
+  --line: #e4e0da;
+  --dark-bg: #0a0a0a;
+  --dark-fg: #f2f0ec;
+  --dark-muted: #8a8580;
   --font-display: 'Display', Georgia, serif;
   --font-body: 'Body', system-ui, sans-serif;
   --gap: 12px;
@@ -42,6 +49,8 @@ body {
   height: 100svh;
   min-height: 480px;
   overflow: hidden;
+  background: var(--dark-bg);
+  color: var(--dark-fg);
 }
 .hero__video {
   position: absolute;
@@ -76,7 +85,7 @@ body {
   font-size: .72rem;
   letter-spacing: .38em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--dark-muted);
 }
 
 /* --- Общее для секций -------------------------------------------------- */
@@ -102,25 +111,39 @@ section { padding: clamp(4rem, 12vh, 8rem) 0; }
   border-top: 1px solid var(--line);
 }
 
+/* Ряды задаются вручную в gallery.js: где-то три кадра, где-то два.
+   Ширина внутри ряда делится пропорционально пропорциям кадров
+   (flex-grow = ширина/высота), поэтому у всех фото ряда одинаковая высота и
+   ни одно не обрезается. Когда пропорции совпадают — а у съёмки обычно так —
+   получаются ровные равные колонки. */
 .gallery {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.gallery__row {
   display: flex;
   gap: var(--gap);
   align-items: flex-start;
 }
-.gallery__col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
+.gallery__item {
+  margin: 0;
+  cursor: zoom-in;
+  flex-basis: 0;
   min-width: 0;
 }
-.gallery__item { margin: 0; cursor: zoom-in; }
 .gallery__item img {
   display: block;
   width: 100%;
   height: auto;
-  background: #141414;
+  background: #f0ede8;
   transition: opacity .4s ease;
+}
+
+/* На телефоне ряд из трёх кадров превращается в марки — раскладываем в одну
+   колонку, порядок при этом сохраняется. */
+@media (max-width: 767px) {
+  .gallery__row { flex-direction: column; }
 }
 .gallery__item:hover img { opacity: .82; }
 .gallery__item:focus-visible {
@@ -150,7 +173,7 @@ section { padding: clamp(4rem, 12vh, 8rem) 0; }
   right: 16px;
   background: none;
   border: 0;
-  color: var(--fg);
+  color: var(--dark-fg);
   font-size: 2.2rem;
   line-height: 1;
   cursor: pointer;
@@ -162,7 +185,7 @@ section { padding: clamp(4rem, 12vh, 8rem) 0; }
   left: 0;
   right: 0;
   text-align: center;
-  color: var(--muted);
+  color: var(--dark-muted);
   font-size: .68rem;
   letter-spacing: .3em;
   margin: 0;
