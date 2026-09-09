@@ -118,6 +118,9 @@ function renderGallery(rowsOfPhotos) {
   for (const row of rowsOfPhotos) {
     const div = document.createElement('div');
     div.className = 'gallery__row';
+    /* Одиночный кадр иначе растянулся бы на всю ширину галереи и подмял бы
+       страницу. Пусть он идёт в масштабе половины пары, по центру. */
+    if (row.length === 1) div.classList.add('gallery__row--solo');
 
     for (const photo of row) {
       const figure = document.createElement('figure');
@@ -125,7 +128,9 @@ function renderGallery(rowsOfPhotos) {
       figure.dataset.index = index;
       figure.tabIndex = 0;
       figure.setAttribute('role', 'button');
-      figure.style.flexGrow = photo.w / photo.h;
+      /* Одиночному кадру ширину задаёт CSS: инлайновый flex-grow перебил бы
+         её, потому что специфичнее правила класса. */
+      if (row.length > 1) figure.style.flexGrow = photo.w / photo.h;
 
       const img = document.createElement('img');
       img.src = photo.src;

@@ -204,6 +204,13 @@ section { padding: clamp(4rem, 12vh, 8rem) 0; }
   gap: var(--gap);
   align-items: flex-start;
 }
+/* Кадр, стоящий в ряду один, показываем в том же масштабе, что и половину
+   пары: во всю ширину он подмял бы под себя всю страницу. Центрируем через
+   justify-content, а не auto-полями: авто-поля на флекс-элементе отменяют
+   растяжение, ряд схлопывается по содержимому — а содержимое с flex-basis: 0
+   даёт нулевую ширину. */
+.gallery__row--solo { justify-content: center; }
+.gallery__row--solo .gallery__item { flex: 0 0 52%; }
 .gallery__item {
   margin: 0;
   cursor: zoom-in;
@@ -222,6 +229,8 @@ section { padding: clamp(4rem, 12vh, 8rem) 0; }
    колонку, порядок при этом сохраняется. */
 @media (max-width: 767px) {
   .gallery__row { flex-direction: column; }
+  /* В колонке flex-basis отмерял бы высоту, а не ширину. */
+  .gallery__row--solo .gallery__item { flex: 0 0 auto; }
 }
 .gallery__item:hover img { opacity: .82; }
 .gallery__item:focus-visible {
