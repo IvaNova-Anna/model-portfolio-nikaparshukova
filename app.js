@@ -128,9 +128,10 @@ function renderGallery(rowsOfPhotos) {
       figure.dataset.index = index;
       figure.tabIndex = 0;
       figure.setAttribute('role', 'button');
-      /* Одиночному кадру ширину задаёт CSS: инлайновый flex-grow перебил бы
-         её, потому что специфичнее правила класса. */
-      if (row.length > 1) figure.style.flexGrow = photo.w / photo.h;
+      /* Пропорция уезжает в переменную, а не в inline flex-grow: инлайновый
+         стиль перебить из медиазапроса можно было бы только !important, а на
+         телефоне ширину кадра задаёт именно CSS. */
+      figure.style.setProperty('--ratio', photo.w / photo.h);
 
       const img = document.createElement('img');
       img.src = photo.src;
