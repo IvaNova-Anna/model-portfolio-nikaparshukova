@@ -3,7 +3,7 @@
    favicon.svg, потому что краулеры мессенджеров JS не выполняют. */
 export const content = {
   name: 'Nika Parshukova',
-  city: '—',
+  city: 'Ekaterinburg',
   telegram: '#',
   booking: 'Available for editorial, commercial, runway and lookbook work.',
   compCard: [
